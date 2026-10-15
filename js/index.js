@@ -17,6 +17,7 @@ export { default as GeminiProvider } from './ai/providers/GeminiProvider.js';
 export { default as OpenAIProvider } from './ai/providers/OpenAIProvider.js';
 export { default as AnthropicProvider } from './ai/providers/AnthropicProvider.js';
 export { default as OllamaProvider } from './ai/providers/OllamaProvider.js';
+export { default as OpenAICompatibleProvider } from './ai/providers/OpenAICompatibleProvider.js';
 
 // Initialize function
 export async function initialize() {

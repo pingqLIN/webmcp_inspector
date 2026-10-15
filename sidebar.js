@@ -11,7 +11,8 @@ const PROVIDER_COLORS = {
   gemini: '#4285f4',
   openai: '#10a37f',
   anthropic: '#d4a574',
-  ollama: '#ff6b6b'
+  ollama: '#ff6b6b',
+  openaiCompatible: '#6366f1'
 };
 
 class SidePanelApp {
@@ -71,7 +72,9 @@ class SidePanelApp {
       providerEditorTitle: document.getElementById('providerEditorTitle'),
       providerStatus: document.getElementById('providerStatus'),
       providerApiKey: document.getElementById('providerApiKey'),
+      providerPreset: document.getElementById('providerPreset'),
       providerServerUrl: document.getElementById('providerServerUrl'),
+      providerServerUrlHint: document.getElementById('providerServerUrlHint'),
       providerOrganization: document.getElementById('providerOrganization'),
       providerModelSelect: document.getElementById('providerModelSelect'),
       providerTemperature: document.getElementById('providerTemperature'),
@@ -188,6 +191,12 @@ class SidePanelApp {
     });
 
     this.dom.saveGeneralSettingsBtn.addEventListener('click', () => this.saveGeneralSettings());
+    this.dom.providerPreset.addEventListener('change', () => {
+      if (this.currentProviderId === 'openaiCompatible' &&
+          this.dom.providerPreset.value === 'lmstudio') {
+        this.dom.providerServerUrl.value = 'http://127.0.0.1:1234/v1';
+      }
+    });
     this.dom.providerRefreshModelsBtn.addEventListener('click', () => this.refreshProviderModels());
     this.dom.providerTestBtn.addEventListener('click', () => this.testProviderConnection());
     this.dom.providerSaveBtn.addEventListener('click', () => this.saveProvider(false));
@@ -1032,7 +1041,9 @@ class SidePanelApp {
     this.dom.providerEditorTitle.textContent = `${provider.name} Configuration`;
 
     this.dom.providerApiKey.value = provider.config?.apiKey || '';
-    this.dom.providerServerUrl.value = provider.config?.serverUrl || 'http://127.0.0.1:11434';
+    this.dom.providerPreset.value = provider.config?.preset || 'lmstudio';
+    this.dom.providerServerUrl.value = provider.config?.serverUrl ||
+      (providerId === 'openaiCompatible' ? 'http://127.0.0.1:1234/v1' : 'http://127.0.0.1:11434');
     this.dom.providerOrganization.value = provider.config?.organization || '';
     this.dom.providerTemperature.value = String(provider.config?.temperature ?? 0.7);
     this.dom.providerMaxTokens.value = String(provider.config?.maxTokens ?? 2048);
@@ -1053,9 +1064,14 @@ class SidePanelApp {
   toggleProviderFieldVisibility(providerId) {
     const isOllama = providerId === 'ollama';
     const isOpenAI = providerId === 'openai';
+    const isCompatible = providerId === 'openaiCompatible';
 
     this.setFieldVisible(this.dom.providerApiKey, !isOllama);
-    this.setFieldVisible(this.dom.providerServerUrl, isOllama);
+    this.dom.providerApiKey.placeholder = isCompatible ? 'Optional local API key' : 'Enter API key';
+    this.setFieldVisible(this.dom.providerPreset, isCompatible);
+    this.setFieldVisible(this.dom.providerServerUrl, isOllama || isCompatible);
+    this.dom.providerServerUrlHint.classList.toggle('hidden', !isCompatible);
+    this.dom.providerServerUrl.placeholder = isCompatible ? 'http://127.0.0.1:1234/v1' : 'http://127.0.0.1:11434';
     this.setFieldVisible(this.dom.providerOrganization, isOpenAI);
   }
 
@@ -1136,9 +1152,16 @@ class SidePanelApp {
     config.maxTokens = Number(this.dom.providerMaxTokens.value || config.maxTokens || 2048);
     config.systemPrompt = this.dom.providerSystemPrompt.value || config.systemPrompt || '';
 
-    if (providerId === 'ollama') {
-      config.serverUrl = this.dom.providerServerUrl.value || 'http://127.0.0.1:11434';
-      delete config.apiKey;
+    if (providerId === 'ollama' || providerId === 'openaiCompatible') {
+      const isCompatible = providerId === 'openaiCompatible';
+      config.serverUrl = this.dom.providerServerUrl.value.trim() ||
+        (isCompatible ? 'http://127.0.0.1:1234/v1' : 'http://127.0.0.1:11434');
+      if (isCompatible) {
+        config.preset = this.dom.providerPreset.value;
+        config.apiKey = this.dom.providerApiKey.value.trim();
+      } else {
+        delete config.apiKey;
+      }
       delete config.organization;
     } else {
       config.apiKey = this.dom.providerApiKey.value.trim();

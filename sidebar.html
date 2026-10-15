@@ -162,8 +162,15 @@
               <input id="providerApiKey" type="password" autocomplete="off" placeholder="Enter API key" />
               <p class="muted">API keys are stored locally by Chrome (not synced), but extension storage is not encrypted. Use restricted development keys only. Anthropic direct-browser mode exposes the key to this extension context.</p>
 
+              <label class="field-label" for="providerPreset">Local server preset</label>
+              <select id="providerPreset">
+                <option value="lmstudio">LM Studio (127.0.0.1:1234)</option>
+                <option value="custom">Custom OpenAI-compatible localhost</option>
+              </select>
+
               <label class="field-label" for="providerServerUrl">Server URL</label>
               <input id="providerServerUrl" type="url" placeholder="http://127.0.0.1:11434" />
+              <p id="providerServerUrlHint" class="muted">For local OpenAI-compatible servers, use a loopback URL ending in /v1. The API key is optional.</p>
 
               <label class="field-label" for="providerOrganization">Organization (optional)</label>
               <input id="providerOrganization" type="text" placeholder="org-..." />

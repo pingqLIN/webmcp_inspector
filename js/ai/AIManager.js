@@ -8,6 +8,7 @@ import GeminiProvider from './providers/GeminiProvider.js';
 import OpenAIProvider from './providers/OpenAIProvider.js';
 import AnthropicProvider from './providers/AnthropicProvider.js';
 import OllamaProvider from './providers/OllamaProvider.js';
+import OpenAICompatibleProvider from './providers/OpenAICompatibleProvider.js';
 
 class AIManager {
   constructor() {
@@ -30,7 +31,8 @@ class AIManager {
       gemini: GeminiProvider,
       openai: OpenAIProvider,
       anthropic: AnthropicProvider,
-      ollama: OllamaProvider
+      ollama: OllamaProvider,
+      openaiCompatible: OpenAICompatibleProvider
     };
     return classes[providerId] || null;
   }
@@ -129,7 +131,7 @@ class AIManager {
   }
 
   /**
-   * Get available models for a provider (for Ollama)
+   * Get available models for a provider
    */
   async getModels(providerId) {
     const providerConfig = this.getProvider(providerId);

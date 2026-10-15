@@ -32,7 +32,8 @@ const FILES = [
   'js/ai/providers/OpenAIProvider.js',
   'js/ai/providers/AnthropicProvider.js',
   'js/ai/providers/GeminiProvider.js',
-  'js/ai/providers/OllamaProvider.js'
+  'js/ai/providers/OllamaProvider.js',
+  'js/ai/providers/OpenAICompatibleProvider.js'
 ];
 
 function ensureDir(path) {

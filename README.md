@@ -17,6 +17,7 @@ WebMCP Inspector is a Chrome Extension for discovering, inspecting, executing, a
   - OpenAI
   - Anthropic
   - Ollama (local)
+  - OpenAI-compatible local APIs (LM Studio preset, llama.cpp and other loopback endpoints)
 - Dynamic refresh flows for late-registered tools and model lists
 - Provider config editor with connection test and model refresh
 - Trace capture for AI/tool interactions
@@ -97,6 +98,7 @@ Open side panel -> `Settings` -> `AI Providers`.
 
 - Gemini / OpenAI / Anthropic: provide API key, select model, save.
 - Ollama: set server URL (recommended `http://127.0.0.1:11434`), refresh models, select model, save.
+- OpenAI-compatible (Local): choose the LM Studio preset (`http://127.0.0.1:1234/v1`) or a custom loopback `/v1` endpoint. API key optional. Refresh models, choose one supporting tool calls, test and save. See [local provider guide](docs/OPENAI_COMPATIBLE_PROVIDER.md).
 
 ## Troubleshooting
 
@@ -151,7 +153,7 @@ curl -i http://127.0.0.1:11434/api/tags
 - Page tool metadata and results are treated as untrusted content before being sent to an AI provider.
 - Consequential tools require explicit confirmation, including AI-requested executions.
 - Execution is bound to the exact discovered tool ID, page URL, and active tab.
-- Ollama connections are restricted to loopback URLs. Anthropic uses its explicitly dangerous direct-browser header; understand that tradeoff before saving a key.
+- Ollama and OpenAI-compatible local connections are restricted to loopback URLs. The latter requires a `/v1` base path. Remote and LAN API endpoints are intentionally excluded in this contribution. Anthropic uses its explicitly dangerous direct-browser header; understand that tradeoff before saving a key.
 - Host access is limited to HTTPS pages plus loopback HTTP development pages, matching WebMCP's secure-context requirement. Chrome restricted pages and remote plain-HTTP pages are excluded.
 
 ## Contributing

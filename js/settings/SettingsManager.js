@@ -85,6 +85,22 @@ const DEFAULT_SETTINGS = {
           { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku', description: 'Fastest' }
         ]
       },
+      openaiCompatible: {
+        enabled: false,
+        name: 'OpenAI-compatible (Local)',
+        icon: '🔌',
+        color: '#6366f1',
+        config: {
+          preset: 'lmstudio',
+          serverUrl: 'http://127.0.0.1:1234/v1',
+          apiKey: '',
+          model: '',
+          temperature: 0.3,
+          maxTokens: 2048,
+          systemPrompt: 'You are an AI assistant helping users interact with web applications using WebMCP tools.'
+        },
+        models: []
+      },
       ollama: {
         enabled: false,
         name: 'Ollama (Local)',

@@ -16,6 +16,17 @@ class OpenAIProvider extends AIProvider {
     return !!this.config.apiKey;
   }
 
+  getAuthHeaders() {
+    const headers = {};
+    if (this.config.apiKey) headers.Authorization = 'Bearer ' + this.config.apiKey;
+    if (this.config.organization) headers['OpenAI-Organization'] = this.config.organization;
+    return headers;
+  }
+
+  canQueryModels() {
+    return this.isConfigured();
+  }
+
   async testConnection() {
     try {
       if (!this.config.apiKey) {
@@ -44,14 +55,9 @@ class OpenAIProvider extends AIProvider {
 
   async getModels() {
     try {
-      if (!this.config.apiKey) return [];
+      if (!this.canQueryModels()) return [];
 
-      const headers = {
-        'Authorization': `Bearer ${this.config.apiKey}`
-      };
-      if (this.config.organization) {
-        headers['OpenAI-Organization'] = this.config.organization;
-      }
+      const headers = this.getAuthHeaders();
 
       const response = await fetch(`${this.baseUrl}/models`, { headers });
       if (!response.ok) return [];
@@ -206,12 +212,8 @@ class OpenAIProvider extends AIProvider {
     try {
       const headers = {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.config.apiKey}`
+        ...this.getAuthHeaders()
       };
-
-      if (this.config.organization) {
-        headers['OpenAI-Organization'] = this.config.organization;
-      }
 
       let body = this.buildRequestBody(messages, tools);
       let lastError = '';
